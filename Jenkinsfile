@@ -15,7 +15,7 @@ pipeline {
          steps {
             sh '''
 TSTAMP=`date +%Y%m%d%H%M`
-eval $(cat /home/ubuntu/op-backup/some.txt | op signin keyvalue)
+eval $(cat /home/ubuntu/op-backup/some.txt | op signin 'username')
 
 vaults=$(op list items | jq '.[]' | jq --raw-output '.vaultUuid' | uniq)
 key=""
@@ -49,7 +49,7 @@ done
 echo $key | openssl aes-256-cbc -pbkdf2 -a -out pass-encrypt.$TSTAMP.json -k $ENCODE
 
 
-aws s3 cp . s3://op-backup-keyvalue --recursive
+aws s3 cp . 'destination-bucket' --recursive
 
 find /home/ubuntu/op-backup/backup/ -type f -mtime +190 -delete
             
